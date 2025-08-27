@@ -1,146 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trading Stats Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stats Tracker</title>
   <style>
+    /* Reset & base */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, sans-serif;
+    }
     body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-    }
-    .container {
-      background-color: #fff;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    form {
+      background: #0f172a; 
+      color: #f8fafc;
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
     }
-    input, select, button {
-      flex: 1;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #38bdf8;
     }
-    button {
-      background-color: #007BFF;
-      color: #fff;
-      border: none;
-      cursor: pointer;
+
+    .card {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-    button:hover {
-      background-color: #0056b3;
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
+
+    .stat {
+      background: #334155;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
       text-align: center;
+      transition: 0.3s;
     }
-    th {
-      background-color: #f0f0f0;
+    .stat:hover {
+      transform: translateY(-5px);
+      background: #475569;
     }
-    .stats {
-      margin-bottom: 20px;
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 0.5rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Trading Stats Tracker</h1>
-    <form id="tradeForm">
-      <select id="result" required>
-        <option value="">Result</option>
-        <option value="win">Win</option>
-        <option value="loss">Loss</option>
-        <option value="breakeven">Breakeven</option>
-      </select>
-      <input type="number" id="rr" step="0.1" placeholder="R:R">
-      <input type="text" id="notes" placeholder="Notes">
-      <button type="submit">Add Trade</button>
-    </form>
-
-    <div class="stats">
-      <p>Total Trades: <span id="totalTrades">0</span></p>
-      <p>Wins: <span id="wins">0</span></p>
-      <p>Losses: <span id="losses">0</span></p>
-      <p>Breakevens: <span id="breakevens">0</span></p>
-      <p>Win Rate: <span id="winRate">0%</span></p>
-      <p>Average R:R (Wins Only): <span id="avgRR">0</span></p>
+  <h1>📊 Stats Tracker</h1>
+  <div class="card">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-value">24</div>
+        <div class="stat-label">Wins</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">12</div>
+        <div class="stat-label">Losses</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">66%</div>
+        <div class="stat-label">Win Rate</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">1.87</div>
+        <div class="stat-label">Avg R:R</div>
+      </div>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Result</th>
-          <th>R:R</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="tradeTable"></tbody>
-    </table>
   </div>
-
-  <script>
-    const trades = [];
-    document.getElementById("tradeForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const result = document.getElementById("result").value;
-      const rr = parseFloat(document.getElementById("rr").value) || 0;
-      const notes = document.getElementById("notes").value;
-
-      trades.push({ result, rr, notes });
-      updateTable();
-      updateStats();
-      this.reset();
-    });
-
-    function updateTable() {
-      const table = document.getElementById("tradeTable");
-      table.innerHTML = "";
-      trades.forEach((trade, index) => {
-        table.innerHTML += \`
-          <tr>
-            <td>\${index + 1}</td>
-            <td>\${trade.result}</td>
-            <td>\${trade.rr}</td>
-            <td>\${trade.notes}</td>
-          </tr>\`;
-      });
-    }
-
-    function updateStats() {
-      const total = trades.length;
-      const wins = trades.filter(t => t.result === "win").length;
-      const losses = trades.filter(t => t.result === "loss").length;
-      const breakevens = trades.filter(t => t.result === "breakeven").length;
-      const winRate = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
-      const winRRs = trades.filter(t => t.result === "win" && t.rr > 0).map(t => t.rr);
-      const avgRR = winRRs.length > 0 ? (winRRs.reduce((a, b) => a + b) / winRRs.length).toFixed(2) : 0;
-
-      document.getElementById("totalTrades").textContent = total;
-      document.getElementById("wins").textContent = wins;
-      document.getElementById("losses").textContent = losses;
-      document.getElementById("breakevens").textContent = breakevens;
-      document.getElementById("winRate").textContent = winRate + "%";
-      document.getElementById("avgRR").textContent = avgRR;
-    }
-  </script>
+  <footer>Built with ❤️ | Stats Tracker</footer>
 </body>
 </html>
